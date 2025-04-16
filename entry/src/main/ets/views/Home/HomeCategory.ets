@@ -1,4 +1,4 @@
-import { it } from "@ohos/hypium"
+import HcTag from "../../commons/components/HcTag"
 import { QuestionType } from "../../models"
 const mockData: QuestionType[] = [
   { id: 1, name: 'ArkTS', displayNewestFlag: 0 },
@@ -18,7 +18,7 @@ struct HomeCategory {
     Tabs(){
       ForEach(this.questionTypeList,(item:QuestionType,index)=>{
          TabContent(){
-
+         HcTag({difficulty:5})
          }.tabBar(this.tabBarBuilder(item,index))
       },(item:QuestionType)=>item.id.toString())
     }.barMode(BarMode.Scrollable)

@@ -1,5 +1,6 @@
 import { HcClockIn } from "../commons/components/HcClockIn"
 import HcSearchBox from "../commons/components/HcSearchBox"
+import QuestionItemComp from "../commons/components/QuestionItemComp"
 import HomeCategory from "../views/Home/HomeCategory"
 
 @Component
@@ -45,8 +46,17 @@ struct HomePage {
       )
 
       // 3.试题分类
-      HomeCategory()
-
+      // HomeCategory()
+      QuestionItemComp({
+        item:{
+          id:'1',
+          stem:'震惊，竟然已经到了 2025 年。过完年之后又要上班啦~',
+          views:10,
+          likeCount:20,
+          difficulty:2,
+          readFlag:0
+        }
+      })
     }
     .width('100%')
     .height('100%')
