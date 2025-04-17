@@ -1,4 +1,5 @@
 import HcTag from "../../commons/components/HcTag"
+import QuestionListComp from "../../commons/components/QuestionListComp"
 import { QuestionType } from "../../models"
 const mockData: QuestionType[] = [
   { id: 1, name: 'ArkTS', displayNewestFlag: 0 },
@@ -18,7 +19,7 @@ struct HomeCategory {
     Tabs(){
       ForEach(this.questionTypeList,(item:QuestionType,index)=>{
          TabContent(){
-         HcTag({difficulty:5})
+         QuestionListComp()
          }.tabBar(this.tabBarBuilder(item,index))
       },(item:QuestionType)=>item.id.toString())
     }.barMode(BarMode.Scrollable)
