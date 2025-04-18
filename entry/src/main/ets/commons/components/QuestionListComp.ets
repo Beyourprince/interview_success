@@ -5,10 +5,11 @@ import QuestionItemComp from "./QuestionItemComp"
 struct QuestionListComp {
   @State isRefreshing: boolean = false
   // 是否加载完成
-  @State isFinished: boolean = true
+  @State isFinished: boolean = false
   // 正在加载中...
   @State isLoading: boolean = false
   @State list: QuestionItem[] = []
+
   // 模拟1秒更新完成
   onRefresh() {
     setTimeout(() => {
@@ -20,6 +21,7 @@ struct QuestionListComp {
       this.isFinished = false
     }, 1000)
   }
+
   // 加载逻辑
   onLoad() {
     setTimeout(() => {
@@ -62,8 +64,8 @@ struct QuestionListComp {
       })
       .scrollBar(BarState.Off)
       .edgeEffect(EdgeEffect.None)
-      .onReachEnd(()=>{
-        if (this.isLoading || this.isFinished || this.isRefreshing ) {
+      .onReachEnd(() => {
+        if (this.isLoading || this.isFinished || this.isRefreshing) {
           return
         }
         this.isLoading = true
