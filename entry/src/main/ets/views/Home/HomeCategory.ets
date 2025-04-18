@@ -21,18 +21,28 @@ struct HomeCategory {
   }
 
   build() {
-    Tabs() {
-      ForEach(this.questionTypeList, (item: QuestionType, index) => {
-        TabContent() {
-          QuestionListComp({typeId:item.id})
-        }.tabBar(this.tabBarBuilder(item, index))
-      }, (item: QuestionType) => item.id.toString())
-    }.barMode(BarMode.Scrollable)
-    .divider({
-      strokeWidth: 1
-    })
-    .layoutWeight(1)
-    .onTabBarClick(index => this.activeIndex = index)
+   Stack({alignContent:Alignment.TopEnd}){
+     Tabs() {
+       ForEach(this.questionTypeList, (item: QuestionType, index) => {
+         TabContent() {
+           QuestionListComp({typeId:item.id})
+         }.tabBar(this.tabBarBuilder(item, index))
+       }, (item: QuestionType) => item.id.toString())
+     }.barMode(BarMode.Scrollable)
+     .barHeight(44)
+     .divider({
+       strokeWidth: 1
+     })
+     .layoutWeight(1)
+     .onTabBarClick(index => this.activeIndex = index)
+   Row(){
+       Image($r('app.media.ic_home_filter'))
+         .width(34)
+   }
+   .width(54)
+   .height(44)
+   .linearGradient({ angle: 90, colors: [['#00FFFFFF', 0], ['#FFFFFF', 0.285]] })
+   }
   }
 
   @Builder
@@ -53,7 +63,7 @@ struct HomeCategory {
       if (item.displayNewestFlag) {
         Image($r('app.media.ic_home_new')).width(30)
       }
-    }.margin({ right: 10, left: 10 })
+    }.margin({ right: index===this.questionTypeList.length-1?70:10, left: 10 })
   }
 }
 
