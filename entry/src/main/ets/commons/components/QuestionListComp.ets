@@ -1,3 +1,4 @@
+import { QuestionItem } from "../../models"
 import QuestionItemComp from "./QuestionItemComp"
 
 @Component
@@ -7,18 +8,35 @@ struct QuestionListComp {
   @State isFinished: boolean = true
   // 正在加载中...
   @State isLoading: boolean = false
-
+  @State list: QuestionItem[] = []
   // 模拟1秒更新完成
   onRefresh() {
     setTimeout(() => {
+      this.list = []
+      for (let i = 0; i < 10; i++) {
+        this.list.push({} as QuestionItem)
+      }
       this.isRefreshing = false
+      this.isFinished = false
+    }, 1000)
+  }
+  // 加载逻辑
+  onLoad() {
+    setTimeout(() => {
+      for (let i = 0; i < 10; i++) {
+        this.list.push({} as QuestionItem)
+      }
+      this.isLoading = false
+      if (this.list.length >= 40) {
+        this.isFinished = true
+      }
     }, 1000)
   }
 
   build() {
     Refresh({ refreshing: $$this.isRefreshing }) {
       List() {
-        ForEach(Array.from({ length: 10 }), (item: number) => {
+        ForEach(this.list, (item: number) => {
           ListItem() {
             QuestionItemComp({
               item: {
@@ -44,10 +62,18 @@ struct QuestionListComp {
       })
       .scrollBar(BarState.Off)
       .edgeEffect(EdgeEffect.None)
+      .onReachEnd(()=>{
+        if (this.isLoading || this.isFinished || this.isRefreshing ) {
+          return
+        }
+        this.isLoading = true
+        this.onLoad()
+      })
     }
     .onRefreshing(() => {
       this.onRefresh()
     })
+
   }
 
   @Builder
