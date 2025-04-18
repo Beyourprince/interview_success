@@ -1,5 +1,7 @@
-import { QuestionItem } from "../../models"
+import { QuestionItem,PageData,QuestionListParams,SortType} from "../../models"
 import QuestionItemComp from "./QuestionItemComp"
+import {http} from '../utils/Http'
+import { promptAction } from "@kit.ArkUI"
 
 @Component
 struct QuestionListComp {
@@ -9,47 +11,54 @@ struct QuestionListComp {
   // 正在加载中...
   @State isLoading: boolean = false
   @State list: QuestionItem[] = []
-
+  @Prop typeId: number
+  @Prop sort: SortType = SortType.Default
+  @State page: number = 1
+  getQuestionList(): Promise<PageData<QuestionItem>> {
+    return http.request<PageData<QuestionItem>>({
+      url: 'question/list',
+      params: {
+        type: this.typeId,
+        questionBankType: 10,
+        sort: this.sort,
+        page: this.page,
+        pageSize: 10
+      } as QuestionListParams
+    })
+  }
   // 模拟1秒更新完成
-  onRefresh() {
-    setTimeout(() => {
-      this.list = []
-      for (let i = 0; i < 10; i++) {
-        this.list.push({} as QuestionItem)
-      }
-      this.isRefreshing = false
+  async onRefresh() {
+    this.page = 1
+    const res = await this.getQuestionList()
+    this.list = res.rows
+    this.isRefreshing = false
+    if (this.page >= res.pageTotal) {
+      this.isFinished = true
+    } else {
       this.isFinished = false
-    }, 1000)
+      this.page++
+    }
+    promptAction.showToast({ message: '更新成功' })
   }
 
   // 加载逻辑
-  onLoad() {
-    setTimeout(() => {
-      for (let i = 0; i < 10; i++) {
-        this.list.push({} as QuestionItem)
-      }
-      this.isLoading = false
-      if (this.list.length >= 40) {
-        this.isFinished = true
-      }
-    }, 1000)
+  async onLoad() {
+    const res = await this.getQuestionList()
+    this.list.push(...res.rows)
+    this.isLoading = false
+    if (this.page >= res.pageTotal) {
+      this.isFinished = true
+    } else {
+      this.page++
+    }
   }
 
   build() {
     Refresh({ refreshing: $$this.isRefreshing }) {
       List() {
-        ForEach(this.list, (item: number) => {
+        ForEach(this.list, (item: QuestionItem) => {
           ListItem() {
-            QuestionItemComp({
-              item: {
-                id: '1',
-                stem: '蛇年大吉',
-                difficulty: 1,
-                likeCount: 10,
-                views: 2,
-                readFlag: 1
-              }
-            })
+            QuestionItemComp({item})
           }
         })
         this.LoadMoreBuilder()

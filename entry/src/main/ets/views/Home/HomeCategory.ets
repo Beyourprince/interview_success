@@ -24,7 +24,7 @@ struct HomeCategory {
     Tabs() {
       ForEach(this.questionTypeList, (item: QuestionType, index) => {
         TabContent() {
-          QuestionListComp()
+          QuestionListComp({typeId:item.id})
         }.tabBar(this.tabBarBuilder(item, index))
       }, (item: QuestionType) => item.id.toString())
     }.barMode(BarMode.Scrollable)
