@@ -3,8 +3,12 @@ import HcSearchBox from "../commons/components/HcSearchBox"
 import QuestionItemComp from "../commons/components/QuestionItemComp"
 import HomeCategory from "../views/Home/HomeCategory"
 
+
 @Component
 struct HomePage {
+  @StorageProp('topHeight')
+  topHeight: number = 0;
+
   @Builder
   SwiperItemBuilder(src: ResourceStr) {
     Row() {
@@ -60,6 +64,8 @@ struct HomePage {
     }
     .width('100%')
     .height('100%')
+    .padding({ top: this.topHeight })
+    .backgroundColor($r('app.color.common_gray_bg'))
   }
 }
 export default HomePage
