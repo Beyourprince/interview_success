@@ -1,6 +1,6 @@
-import { QuestionItem,PageData,QuestionListParams,SortType} from "../../models"
+import { QuestionItem, PageData, QuestionListParams, SortType } from "../../models"
 import QuestionItemComp from "./QuestionItemComp"
-import {http} from '../utils/Http'
+import { http } from '../utils/Http'
 import { promptAction } from "@kit.ArkUI"
 
 @Component
@@ -12,8 +12,18 @@ struct QuestionListComp {
   @State isLoading: boolean = false
   @State list: QuestionItem[] = []
   @Prop typeId: number
-  @Prop sort: SortType = SortType.Default
+  @Prop @Watch('onChangeSort') sort: SortType = SortType.Default
+  @Prop activeIndex: number
+  @Prop index: number
   @State page: number = 1
+
+  // 切换分类的时候，需要等待UI显示后去刷新
+  onChangeSort() {
+    if (this.activeIndex === this.index) {
+      this.isRefreshing = true
+    }
+  }
+
   getQuestionList(): Promise<PageData<QuestionItem>> {
     return http.request<PageData<QuestionItem>>({
       url: 'question/list',
@@ -26,6 +36,7 @@ struct QuestionListComp {
       } as QuestionListParams
     })
   }
+
   // 模拟1秒更新完成
   async onRefresh() {
     this.page = 1
@@ -58,7 +69,7 @@ struct QuestionListComp {
       List() {
         ForEach(this.list, (item: QuestionItem) => {
           ListItem() {
-            QuestionItemComp({item})
+            QuestionItemComp({ item })
           }
         })
         this.LoadMoreBuilder()

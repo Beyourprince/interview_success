@@ -1,17 +1,16 @@
-@Preview
 @Component
 export struct HcClockIn {
   // 大于表示已打卡
   @Prop clockInCount: number = 0
 
   build() {
-    Row(){
+    Row() {
       if (this.clockInCount > 0) {
-        Column(){
+        Column() {
           Text('已连续打卡')
             .fontColor($r('app.color.black'))
             .fontSize(8)
-          Text(){
+          Text() {
             Span(this.clockInCount.toString())
               .fontSize(12)
               .fontWeight(600)
@@ -20,7 +19,7 @@ export struct HcClockIn {
           }
           .fontColor($r('app.color.black'))
         }
-        .margin({ left: 30})
+        .margin({ left: 30 })
       } else {
         Text('打卡')
           .fontColor($r('app.color.black'))

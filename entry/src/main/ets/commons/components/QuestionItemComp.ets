@@ -1,7 +1,6 @@
 import { QuestionItem } from '../../models'
 import HcTag from './HcTag'
 
-@Preview
 @Component
 struct QuestionItemComp {
   @Prop item: QuestionItem = {} as QuestionItem
@@ -45,4 +44,5 @@ function grayText(isStart: boolean = false) {
   .fontColor($r('app.color.common_gray_01'))
   .padding({ left: isStart ? 0 : 12, right: 12 })
 }
+
 export default QuestionItemComp

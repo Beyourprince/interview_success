@@ -18,10 +18,11 @@ function textTitle() {
 @Component
 struct HomeCategory {
   @State questionTypeList: QuestionType[] = mockData
-  @State activeIndex: number = 0
+  @State activeIndex: number = 0 //当前所在分类
   @State isShow: boolean = false
   @State filterDataIndex: number = 0
   @State filterDataSort: SortType = SortType.Default
+  @State sort: SortType = SortType.Default
 
   aboutToAppear(): void {
     this.getQuestionTypeList()
@@ -35,10 +36,15 @@ struct HomeCategory {
 
   build() {
     Stack({ alignContent: Alignment.TopEnd }) {
-      Tabs() {
+      Tabs({ index: this.activeIndex }) {
         ForEach(this.questionTypeList, (item: QuestionType, index) => {
           TabContent() {
-            QuestionListComp({ typeId: item.id })
+            QuestionListComp({
+              typeId: item.id,
+              sort: this.sort,
+              activeIndex: this.activeIndex,
+              index: index
+            })
           }.tabBar(this.tabBarBuilder(item, index))
         }, (item: QuestionType) => item.id.toString())
       }
@@ -63,10 +69,12 @@ struct HomeCategory {
       })
       .onClick(() => {
         this.isShow = true
+        this.filterDataIndex = this.activeIndex
       })
     }
   }
 
+  // 试题分类
   @Builder
   tabBarBuilder(item: QuestionType, index: number) {
     Row({ space: 4 }) {
@@ -88,6 +96,7 @@ struct HomeCategory {
     }.margin({ right: index === this.questionTypeList.length - 1 ? 70 : 10, left: 10 })
   }
 
+  // 筛选弹窗
   @Builder
   FilterSheetBuilder() {
     Column() {
@@ -96,6 +105,10 @@ struct HomeCategory {
           .fontSize(16)
           .fontWeight(500)
           .fontColor($r('app.color.common_gray_03'))
+          .onClick(() => {
+            this.filterDataIndex = 0
+            this.filterDataSort = SortType.Default
+          })
         Text('筛选题目')
           .layoutWeight(1)
           .fontSize(18)
@@ -106,6 +119,11 @@ struct HomeCategory {
           .fontWeight(500)
           .fontSize(16)
           .fontColor($r('app.color.common_main_color'))
+          .onClick(() => {
+            this.isShow = false
+            this.activeIndex = this.filterDataIndex
+            this.sort = this.filterDataSort
+          })
       }
       .margin({ bottom: 4, top: 4 })
 
