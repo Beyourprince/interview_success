@@ -3,6 +3,8 @@ import QuestionListComp from "../../commons/components/QuestionListComp"
 import { QuestionType, SortType } from "../../models"
 import { http } from '../../commons/utils/Http'
 import { DataType } from "@kit.MediaLibraryKit"
+import { HcSkeleton } from "../../commons/components/HcSkeleton"
+import { HcSkeletonItem } from "../../commons/components/HcSkeletonItem"
 
 const mockData: QuestionType[] = []
 
@@ -23,54 +25,61 @@ struct HomeCategory {
   @State filterDataIndex: number = 0
   @State filterDataSort: SortType = SortType.Default
   @State sort: SortType = SortType.Default
+  // 加载
+  @State loading: boolean = false
 
   aboutToAppear(): void {
     this.getQuestionTypeList()
   }
 
   async getQuestionTypeList() {
+    this.loading = true
     const res = await http.request<QuestionType[]>({ url: 'question/type' })
-    console.log('+++res:' + JSON.stringify(res))
     this.questionTypeList = res
+    this.loading = false
   }
 
   build() {
-    Stack({ alignContent: Alignment.TopEnd }) {
-      Tabs({ index: this.activeIndex }) {
-        ForEach(this.questionTypeList, (item: QuestionType, index) => {
-          TabContent() {
-            QuestionListComp({
-              typeId: item.id,
-              sort: this.sort,
-              activeIndex: this.activeIndex,
-              index: index
-            })
-          }.tabBar(this.tabBarBuilder(item, index))
-        }, (item: QuestionType) => item.id.toString())
-      }
-      .barMode(BarMode.Scrollable)
-      .barHeight(44)
-      .divider({
-        strokeWidth: 1
-      })
-      .layoutWeight(1)
-      .onTabBarClick(index => this.activeIndex = index)
+    if (this.loading) {
+      this.SkeletonBuilder()
+    } else {
+      Stack({ alignContent: Alignment.TopEnd }) {
+        Tabs({ index: this.activeIndex }) {
+          ForEach(this.questionTypeList, (item: QuestionType, index) => {
+            TabContent() {
+              QuestionListComp({
+                typeId: item.id,
+                sort: this.sort,
+                activeIndex: this.activeIndex,
+                index: index
+              })
+            }.tabBar(this.tabBarBuilder(item, index))
+          }, (item: QuestionType) => item.id.toString())
+        }
+        .barMode(BarMode.Scrollable)
+        .barHeight(44)
+        .divider({
+          strokeWidth: 1
+        })
+        .layoutWeight(1)
+        .onTabBarClick(index => this.activeIndex = index)
 
-      Row() {
-        Image($r('app.media.ic_home_filter'))
-          .width(34)
+        Row() {
+          Image($r('app.media.ic_home_filter'))
+            .width(34)
+        }
+        .width(54)
+        .height(44)
+        .linearGradient({ angle: 90, colors: [['#00FFFFFF', 0], ['#FFFFFF', 0.285]] })
+        .bindSheet($$this.isShow, this.FilterSheetBuilder(), {
+          showClose: false,
+          height: 400
+        })
+        .onClick(() => {
+          this.isShow = true
+          this.filterDataIndex = this.activeIndex
+        })
       }
-      .width(54)
-      .height(44)
-      .linearGradient({ angle: 90, colors: [['#00FFFFFF', 0], ['#FFFFFF', 0.285]] })
-      .bindSheet($$this.isShow, this.FilterSheetBuilder(), {
-        showClose: false,
-        height: 400
-      })
-      .onClick(() => {
-        this.isShow = true
-        this.filterDataIndex = this.activeIndex
-      })
     }
   }
 
@@ -191,6 +200,34 @@ struct HomeCategory {
     .padding(16)
     .backgroundColor($r('app.color.white'))
     .height('100%')
+  }
+
+  @Builder
+  SkeletonBuilder() {
+    HcSkeleton() {
+      Column() {
+        Row({ space: 16 }) {
+          HcSkeletonItem({ widthValue: 60 })
+          HcSkeletonItem({ widthValue: 100 })
+          HcSkeletonItem({ widthValue: 80 })
+          HcSkeletonItem({ widthValue: 40 })
+        }
+        .height(44)
+        .width('100%')
+
+        ForEach([1, 2, 3, 4, 5, 6], () => {
+          Column({ space: 10 }) {
+            HcSkeletonItem({ widthValue: '90%' })
+            HcSkeletonItem({ widthValue: '45%' })
+          }
+          .height(80)
+          .width('100%')
+          .alignItems(HorizontalAlign.Start)
+          .justifyContent(FlexAlign.Center)
+        })
+      }
+      .padding({ left: 16, right: 16 })
+    }
   }
 }
 
