@@ -120,7 +120,7 @@ struct LoginPage {
         })
         .stateEffect(false)
         .onClick(() => {
-
+          this.login()
         })
       }
       .padding({ left: 36, right: 36, top: 30 })
