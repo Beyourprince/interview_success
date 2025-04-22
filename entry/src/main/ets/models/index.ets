@@ -1,21 +1,26 @@
 //分类
-export interface QuestionType{
-  id:number
-  name:string
-  displayNewestFlag:0|1
+export interface QuestionType {
+  id: number
+  name: string
+  displayNewestFlag: 0 | 1
 }
 
 // 试题
 export interface QuestionItem {
   id: string;
+
   /* 题干 */
   stem: string;
+
   /* 难度 */
   difficulty: number;
+
   /* 点赞数 */
   likeCount: number;
+
   /* 浏览数 */
   views: number;
+
   /* 是否已看 */
   readFlag: 0 | 1;
 }
@@ -41,4 +46,16 @@ export interface QuestionListParams {
   sort?: SortType
   page?: number
   pageSize?: number
+}
+
+export interface User {
+  id: string
+  username: string
+  avatar: string
+  token: string
+  nickName?: string
+  // 学习时长
+  totalTime?: number
+  // 打卡次数
+  clockinNumbers?: number
 }
