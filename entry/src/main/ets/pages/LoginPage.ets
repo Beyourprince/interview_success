@@ -2,6 +2,9 @@ import { HcNavBar } from '../commons/components/HcNavBar'
 import { promptAction, router } from '@kit.ArkUI'
 import { http } from '../commons/utils/Http'
 import { User } from '../models'
+import { auth } from '../commons/utils/Auth'
+import { emitter } from '@kit.BasicServicesKit'
+import { LOGIN_EVENT } from '../commons/constants'
 
 interface LoginParams {
   username: string
@@ -40,8 +43,11 @@ struct LoginPage {
           password: this.code
         }
       })
+
       this.loading = false
-      AppStorage.setOrCreate<User>('user', user)
+      auth.setUser(user)
+      emitter.emit(LOGIN_EVENT)
+      // AppStorage.setOrCreate<User>('user', user)
       router.back()
     } catch (e) {
       this.loading = false

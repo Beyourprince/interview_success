@@ -1,8 +1,11 @@
 /**
  * Http 请求工具，基于 axios 封装
  */
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from '@ohos/axios'
-import { logger }  from './logger'
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from '@ohos/axios'
+import { User } from '../../models';
+import { auth } from './Auth';
+import { logger } from './logger'
+import { promptAction, router } from '@kit.ArkUI';
 
 export const baseURL = 'https://api-harmony-teach.itheima.net/hm/'
 
@@ -10,6 +13,20 @@ export const instance = axios.create({
   baseURL,
   timeout: 100000
 })
+
+// 添加请求拦截器
+instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  // 对请求数据做点什么
+  const user = auth.getUser()
+  if (user.token) {
+    config.headers.Authorization = `Bearer ${user.token}`
+    // config.headers.Authorization = `Beareraffdcgh`
+  }
+  return config;
+}, (error: AxiosError) => {
+  // 对请求错误做些什么
+  return Promise.reject(error);
+});
 
 // 响应拦截器
 instance.interceptors.response.use((res: AxiosResponse) => {
@@ -21,6 +38,13 @@ instance.interceptors.response.use((res: AxiosResponse) => {
   return Promise.reject(res.data)
 }, (err: AxiosError) => {
   logger.error('Req Error', JSON.stringify(err))
+  if (err.response?.status === 401) {
+    auth.setUser({} as User)
+    router.pushUrl({
+      url: 'pages/LoginPage'
+    }, router.RouterMode.Single)
+    promptAction.showToast({ message: '登录失效' })
+  }
   return Promise.reject(err)
 })
 

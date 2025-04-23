@@ -1,6 +1,7 @@
 import { router } from '@kit.ArkUI'
 import { HcClockIn } from '../commons/components/HcClockIn'
 import { formatTime } from '../commons/utils'
+import { auth, UserStoreKey } from '../commons/utils/Auth'
 import { statusBar } from '../commons/utils/StatusBar'
 import { User } from '../models'
 
@@ -22,7 +23,7 @@ interface Tool {
 export struct MinePage {
   @StorageProp('topHeight')
   topHeight: number = 0
-  @StorageProp('user')
+  @StorageProp(UserStoreKey)
   user: User = {} as User
 
   @Builder
@@ -177,6 +178,9 @@ export struct MinePage {
       .backgroundColor($r('app.color.white'))
       .borderRadius(8)
 
+      Button('登出').onClick(() => {
+        auth.setUser({} as User)
+      })
     }
     .padding(16)
     .backgroundColor($r('app.color.common_gray_bg'))

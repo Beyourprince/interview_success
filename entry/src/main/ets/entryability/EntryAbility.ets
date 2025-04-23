@@ -2,6 +2,7 @@ import { AbilityConstant, ConfigurationConstant, UIAbility, Want } from '@kit.Ab
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
 import { fullScreen } from '../commons/utils/FullScreen';
+import { auth } from '../commons/utils/Auth';
 
 const DOMAIN = 0x0000;
 
@@ -25,8 +26,10 @@ export default class EntryAbility extends UIAbility {
         hilog.error(DOMAIN, 'testTag', 'Failed to load the content. Cause: %{public}s', JSON.stringify(err));
         return;
       }
+      auth.initUser()
       hilog.info(DOMAIN, 'testTag', 'Succeeded in loading the content.');
     });
+
   }
 
   onWindowStageDestroy(): void {

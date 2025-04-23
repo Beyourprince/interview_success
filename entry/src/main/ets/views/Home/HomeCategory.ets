@@ -5,6 +5,8 @@ import { http } from '../../commons/utils/Http'
 import { DataType } from "@kit.MediaLibraryKit"
 import { HcSkeleton } from "../../commons/components/HcSkeleton"
 import { HcSkeletonItem } from "../../commons/components/HcSkeletonItem"
+import { emitter } from "@kit.BasicServicesKit"
+import { LOGIN_EVENT } from "../../commons/constants"
 
 const mockData: QuestionType[] = []
 
@@ -30,6 +32,9 @@ struct HomeCategory {
 
   aboutToAppear(): void {
     this.getQuestionTypeList()
+    emitter.on(LOGIN_EVENT, () => {
+      this.getQuestionTypeList()
+    })
   }
 
   async getQuestionTypeList() {
