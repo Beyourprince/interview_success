@@ -1,7 +1,8 @@
 import { QuestionItem, PageData, QuestionListParams, SortType } from "../../models"
 import QuestionItemComp from "./QuestionItemComp"
 import { http } from '../utils/Http'
-import { promptAction } from "@kit.ArkUI"
+import { promptAction, router } from "@kit.ArkUI"
+import { auth } from "../utils/Auth"
 
 @Component
 struct QuestionListComp {
@@ -70,7 +71,15 @@ struct QuestionListComp {
         ForEach(this.list, (item: QuestionItem) => {
           ListItem() {
             QuestionItemComp({ item })
-          }
+          }.onClick(() => {
+            auth.checkAuth({
+              url: 'pages/QuestionPage',
+              params: item.id
+            })
+            // router.pushUrl({
+            //   url: 'pages/QuestionPage'
+            // })
+          })
         })
         this.LoadMoreBuilder()
       }

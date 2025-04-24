@@ -25,6 +25,10 @@ struct LoginPage {
   @State
   loading: boolean = false
 
+  aboutToAppear(): void {
+    console.info('+++router', JSON.stringify(router.getParams()))
+  }
+
   async login() {
     if (!this.mobile) {
       return promptAction.showToast({ message: '请输入用户名' })
@@ -48,7 +52,13 @@ struct LoginPage {
       auth.setUser(user)
       emitter.emit(LOGIN_EVENT)
       // AppStorage.setOrCreate<User>('user', user)
-      router.back()
+      // 有 return_url 就回跳
+      const params = router.getParams() as Record<string, string> || {}
+      if (params?.return_url) {
+        router.replaceUrl({ url: params.return_url, params })
+      } else {
+        router.back()
+      }
     } catch (e) {
       this.loading = false
       promptAction.showToast({ message: e.message })
